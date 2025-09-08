@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Mistral Chatbot</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; }
+    #chat { border: 1px solid #ccc; padding: 10px; height: 300px; overflow-y: auto; }
+    .user { color: blue; margin: 5px 0; }
+    .bot { color: green; margin: 5px 0; }
+  </style>
+</head>
+<body>
+  <h2>Mistral AI Chatbot</h2>
+  <div id="chat"></div>
+  <input type="text" id="input" placeholder="Ask me anything..." style="width:80%">
+  <button onclick="sendMessage()">Send</button>
+
+  <script>
+    async function sendMessage() {
+      const input = document.getElementById("input");
+      const chat = document.getElementById("chat");
+      const userMessage = input.value;
+
+      chat.innerHTML += `<div class="user"><b>You:</b> ${userMessage}</div>`;
+      input.value = "";
+
+      // Call your backend proxy instead of Hugging Face directly
+      const response = await fetch("https://huggingface.co/spaces/helloall/Meaw", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt: userMessage })
+      });
+
+      const data = await response.json();
+      chat.innerHTML += `<div class="bot"><b>Bot:</b> ${data.reply}</div>`;
+      chat.scrollTop = chat.scrollHeight;
+    }
+  </script>
+</body>
+</html>

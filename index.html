@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>DMV 2.5 Chatbot</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(325deg, #ffe6f0 0%, #fff5e6 100%);
+            color: #333;
+            text-align: center;
+            padding: 50px;
+        }
+        #chatbox {
+            width: 80%;
+            max-width: 600px;
+            margin: 0 auto;
+            border: 2px solid #ffd700;
+            border-radius: 12px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.9);
+        }
+        input[type="text"] {
+            width: 70%;
+            padding: 10px;
+            font-size: 16px;
+            border: 2px solid #ff69b4;
+            border-radius: 6px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background: linear-gradient(90deg, #ff69b4 0%, #ffd700 100%);
+            border: none;
+            border-radius: 6px;
+            color: white;
+            cursor: pointer;
+        }
+        #conversation {
+            margin-top: 20px;
+            text-align: left;
+        }
+        .user { color: #ff69b4; }
+        .dmv { color: #cc9f1e; }
+    </style>
+</head>
+<body>
+    <h1>🌸 DMV 2.5 Chatbot 🌸</h1>
+    <div id="chatbox">
+        <input type="text" id="userInput" placeholder="Ask DMV 2.5 anything..."/>
+        <button onclick="sendMessage()">Ask DMV</button>
+        <div id="conversation"></div>
+    </div>
+
+    <script>
+        const API_URL = "https://<your-space-name>.hf.space/chat"; // replace with your Space URL
+
+        async function sendMessage() {
+            const input = document.getElementById("userInput");
+            const question = input.value.trim();
+            if (!question) return;
+
+            // Show user message
+            const conversation = document.getElementById("conversation");
+            conversation.innerHTML += `<p class="user"><b>You:</b> ${question}</p>`;
+
+            input.value = "";
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ text: question })
+                });
+                const data = await response.json();
+                const answer = data.response;
+
+                conversation.innerHTML += `<p class="dmv"><b>DMV 2.5:</b> ${answer}</p>`;
+                conversation.scrollTop = conversation.scrollHeight;
+            } catch (error) {
+                conversation.innerHTML += `<p class="dmv"><b>DMV 2.5:</b> Error connecting to API.</p>`;
+            }
+        }
+    </script>
+</body>
+</html>
